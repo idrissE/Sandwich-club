@@ -3,7 +3,10 @@ package com.udacity.sandwichclub;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
+import android.view.View;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
@@ -19,8 +22,6 @@ public class DetailActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
-
-        ImageView ingredientsIv = findViewById(R.id.image_iv);
 
         Intent intent = getIntent();
         if (intent == null) {
@@ -42,12 +43,7 @@ public class DetailActivity extends AppCompatActivity {
             closeOnError();
             return;
         }
-
-        populateUI();
-        Picasso.with(this)
-                .load(sandwich.getImage())
-                .into(ingredientsIv);
-
+        populateUI(sandwich);
         setTitle(sandwich.getMainName());
     }
 
@@ -56,7 +52,50 @@ public class DetailActivity extends AppCompatActivity {
         Toast.makeText(this, R.string.detail_error_message, Toast.LENGTH_SHORT).show();
     }
 
-    private void populateUI() {
+    private void populateUI(Sandwich sandwich) {
+        ImageView sandwichImg = findViewById(R.id.image_iv);
+        TextView mainNameTv = findViewById(R.id.main_name_tv);
+        TextView originTv = findViewById(R.id.origin_tv);
+        TextView originLabel = findViewById(R.id.origin_label);
+        TextView alsoKnownAsTv = findViewById(R.id.also_known_tv);
+        TextView alsoKnownAsLabel = findViewById(R.id.known_as_label);
+        TextView descriptionTv = findViewById(R.id.description_tv);
+        TextView ingredientsTv = findViewById(R.id.ingredients_tv);
+        TextView ingredientsLabel = findViewById(R.id.ingredients_label);
+        // Image
+        Picasso.get()
+                .load(sandwich.getImage())
+                .into(sandwichImg);
+        // Main Name
+        mainNameTv.setText(sandwich.getMainName());
 
+        // origin
+        if (!TextUtils.isEmpty(sandwich.getPlaceOfOrigin()))
+            originTv.setText(sandwich.getPlaceOfOrigin());
+        else {
+            originTv.setVisibility(View.GONE);
+            originLabel.setVisibility(View.GONE);
+        }
+
+        // known as
+        if (!sandwich.getAlsoKnownAs().isEmpty()) {
+            for (String nickName : sandwich.getAlsoKnownAs())
+                alsoKnownAsTv.append(nickName + "\n");
+        } else {
+            alsoKnownAsTv.setVisibility(View.GONE);
+            alsoKnownAsLabel.setVisibility(View.GONE);
+        }
+
+        // ingredients
+        if (!sandwich.getIngredients().isEmpty())
+            for (String ingredient : sandwich.getIngredients())
+                ingredientsTv.append(ingredient + "\n");
+        else {
+            ingredientsTv.setVisibility(View.GONE);
+            ingredientsLabel.setVisibility(View.GONE);
+        }
+
+        // description
+        descriptionTv.setText(sandwich.getDescription());
     }
 }
