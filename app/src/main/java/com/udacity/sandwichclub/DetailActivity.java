@@ -65,6 +65,7 @@ public class DetailActivity extends AppCompatActivity {
         // Image
         Picasso.get()
                 .load(sandwich.getImage())
+                .error(R.drawable.not_found)
                 .into(sandwichImg);
         // Main Name
         mainNameTv.setText(sandwich.getMainName());
